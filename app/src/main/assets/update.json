@@ -3,6 +3,8 @@
     "Changelog - Yanndroid:",
     "- sound tab crash fix",
     "- single apk for oneui 3/4 themed",
-    "- dependency update"
+    "- dependency update",
+    "- Implement Disable Charging function, fix TCP congestion algorithm detection - ExtremeXT",
+    "- Add new path for Disable Charging function - xfwdrev"
   ]
 }
