@@ -127,6 +127,19 @@ public class CPUFragment extends RecyclerViewFragment {
         if (mCPUBoost.supported()) {
             cpuBoostInit(items);
         }
+
+        if (Misc.hasUnderVolt()) {
+            cpuUndervolt(items);
+        }
+
+        if (Misc.hasThermalControl()) {
+            thermalControl(items);
+        }
+
+        if (Misc.hasESGBurst()) {
+            esgburst(items);
+        }
+
         if (Misc.hasCpuFingerprintBoost()) {
             cpuFingerprintBoostInit(items);
         }
@@ -142,6 +155,7 @@ public class CPUFragment extends RecyclerViewFragment {
         if (Misc.hasCpuQuiet()) {
             cpuQuietInit(items);
         }
+
         if (Misc.hasCpuTouchBoost()) {
             cpuTouchBoostInit(items);
         }
@@ -399,6 +413,152 @@ public class CPUFragment extends RecyclerViewFragment {
             items.add(LITTLEFrequenciesCard);
             items.add(LITTLEGovernorsCard);
         }
+    }
+
+    private void thermalControl(List<RecyclerViewItem> items) {
+        CardView tvCard = new CardView(getActivity());
+        tvCard.setTitle(getString(R.string.thermal_control));
+
+        SeekBarView ltc = new SeekBarView();
+        ltc.setTitle(getString(R.string.ltc_title));
+        ltc.setSummary(getString(R.string.ltc_summary));
+        ltc.setMin(-15);
+        ltc.setMax(0);
+        int ltcValue = Misc.getThermalLittle() / 1000;
+        int ltcIndex = ltcValue - (-15);
+        ltc.setProgress(ltcIndex);
+
+        ltc.setOnSeekBarListener(new SeekBarView.OnSeekBarListener() {
+            @Override
+            public void onStop(SeekBarView seekBarView, int position, String value) {
+                int ltcValue = position - 15;
+                int kernelValue = ltcValue * 1000;
+                Misc.setThermalLittle(kernelValue, getActivity());
+            }
+
+            @Override
+            public void onMove(SeekBarView seekBarView, int position, String value) {
+            }
+        });
+
+        tvCard.addItem(ltc);
+
+        SeekBarView mdc = new SeekBarView();
+        mdc.setTitle(getString(R.string.mdc_title));
+        mdc.setSummary(getString(R.string.mdc_summary));
+        mdc.setMin(-15);
+        mdc.setMax(0);
+        int midValue = Misc.getThermalMid() / 1000;
+        int midIndex = midValue - (-15);
+        mdc.setProgress(midIndex);
+
+        mdc.setOnSeekBarListener(new SeekBarView.OnSeekBarListener() {
+            @Override
+            public void onStop(SeekBarView seekBarView, int position, String value) {
+                int mdcValue = position - 15;
+                int kernelValue = mdcValue * 1000;
+                Misc.setThermalMid(kernelValue, getActivity());
+            }
+
+            @Override
+            public void onMove(SeekBarView seekBarView, int position, String value) {
+            }
+        });
+
+        tvCard.addItem(mdc);
+
+        SeekBarView bic = new SeekBarView();
+        bic.setTitle(getString(R.string.bic_title));
+        bic.setSummary(getString(R.string.bic_summary));
+        bic.setMin(-15);
+        bic.setMax(0);
+        int bicValue = Misc.getThermalBig() / 1000;
+        int bicIndex = bicValue - (-15);
+        bic.setProgress(bicIndex);
+
+        bic.setOnSeekBarListener(new SeekBarView.OnSeekBarListener() {
+            @Override
+            public void onStop(SeekBarView seekBarView, int position, String value) {
+                int bicValue = position - 15;
+                int kernelValue = bicValue * 1000;
+                Misc.setThermalBig(kernelValue, getActivity());
+            }
+
+            @Override
+            public void onMove(SeekBarView seekBarView, int position, String value) {
+            }
+        });
+
+        tvCard.addItem(bic);
+
+        items.add(tvCard);
+    }
+
+    private void cpuUndervolt(List<RecyclerViewItem> items) {
+        CardView uvCard = new CardView(getActivity());
+        uvCard.setTitle(getString(R.string.cpu_undervolt));
+
+        SeekBarView cl0 = new SeekBarView();
+        cl0.setTitle(getString(R.string.cl0_title));
+        cl0.setSummary(getString(R.string.cl0_summary));
+        cl0.setMin(0);
+        cl0.setMax(15);
+        cl0.setProgress(Misc.getCpuCl0Uv());
+
+        cl0.setOnSeekBarListener(new SeekBarView.OnSeekBarListener() {
+            @Override
+            public void onStop(SeekBarView seekBarView, int position, String value) {
+                Misc.setCpucl0Uv(position, getActivity());
+            }
+
+            @Override
+            public void onMove(SeekBarView seekBarView, int position, String value) {
+            }
+        });
+
+        uvCard.addItem(cl0);
+
+        SeekBarView cl1 = new SeekBarView();
+        cl1.setTitle(getString(R.string.cl1_title));
+        cl1.setSummary(getString(R.string.cl1_summary));
+        cl1.setMin(0);
+        cl1.setMax(15);
+        cl1.setProgress(Misc.getCpuCl1Uv());
+
+        cl1.setOnSeekBarListener(new SeekBarView.OnSeekBarListener() {
+            @Override
+            public void onStop(SeekBarView seekBarView, int position, String value) {
+                Misc.setCpucl1Uv(position, getActivity());
+            }
+
+            @Override
+            public void onMove(SeekBarView seekBarView, int position, String value) {
+            }
+        });
+
+        uvCard.addItem(cl1);
+
+        SeekBarView cl2 = new SeekBarView();
+        cl2.setTitle(getString(R.string.cl2_title));
+        cl2.setSummary(getString(R.string.cl2_summary));
+        cl2.setMin(0);
+        cl2.setMax(15);
+        cl2.setProgress(Misc.getCpuCl2Uv());
+
+        cl2.setOnSeekBarListener(new SeekBarView.OnSeekBarListener() {
+            @Override
+            public void onStop(SeekBarView seekBarView, int position, String value) {
+                Misc.setCpucl2Uv(position, getActivity());
+            }
+
+            @Override
+            public void onMove(SeekBarView seekBarView, int position, String value) {
+            }
+        });
+
+        uvCard.addItem(cl2);
+
+        items.add(uvCard);
     }
 
     private void showGovernorTunables(int min, int max) {
@@ -720,6 +880,28 @@ public class CPUFragment extends RecyclerViewFragment {
                 -> Misc.enableCpuTouchBoost(isChecked, getActivity()));
 
         items.add(touchBoost);
+    }
+
+    private void esgburst(List<RecyclerViewItem> items) {
+        CardView esgCard = new CardView(getActivity());
+        esgCard.setTitle(getString(R.string.esg_title));
+
+        String currentGov = mCPUFreq.getGovernor(true);
+
+        boolean enabled = "energy_step".equals(currentGov);
+
+        SwitchView esg = new SwitchView();
+        esg.setEnabled(enabled);
+        esg.setAlpha(enabled ? 1f: 0.4f);
+        esg.setSummary(getString(R.string.esg_summary));
+        esg.setChecked(Misc.isESGBurstEnabled());
+        esg.addOnSwitchListener((switchView, isChecked) -> {
+            if (!enabled) return;
+            Misc.enableESGBurst(isChecked, getActivity());
+        });
+
+        esgCard.addItem(esg);
+        items.add(esgCard);
     }
 
     @Override

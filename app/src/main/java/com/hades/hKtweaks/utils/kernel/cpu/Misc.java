@@ -47,9 +47,15 @@ public class Misc {
 
     private static final String CPU_TOUCH_BOOST = "/sys/module/msm_performance/parameters/touchboost";
     private static final String CPU_FINGERPRINT_BOOST = "/sys/kernel/fp_boost/enabled";
-
     private static String[] sAvailableCFSSchedulers;
     private static String[] sCpuQuietAvailableGovernors;
+    private static final String CPUCL0_UV = "/sys/kernel/exynos_uv/cpucl0_uv_percent";
+    private static final String CPUCL1_UV = "/sys/kernel/exynos_uv/cpucl1_uv_percent";
+    private static final String CPUCL2_UV = "/sys/kernel/exynos_uv/cpucl2_uv_percent";
+    private static final String BIG_OFFSET = "/proc/exynos_tmu/BIG_offset";
+    private static final String MID_OFFSET = "/proc/exynos_tmu/MID_offset";
+    private static final String LITTLE_OFFSET = "/proc/exynos_tmu/LITTLE_offset";
+    private static final String ESG_BURST = "/sys/kernel/ems/energy_step/short_burst";
 
     public static void enableCpuTouchBoost(boolean enabled, Context context) {
         run(Control.write(enabled ? "1" : "0", CPU_TOUCH_BOOST), CPU_TOUCH_BOOST, context);
@@ -62,13 +68,59 @@ public class Misc {
     public static boolean hasCpuTouchBoost() {
         return Utils.existFile(CPU_TOUCH_BOOST);
     }
-
+    public static boolean hasUnderVolt() { return Utils.existFile(CPUCL0_UV); }
+    public static boolean hasThermalControl() { return Utils.existFile(BIG_OFFSET); }
     public static void setCpuQuietGovernor(String value, Context context) {
         run(Control.write(value, CPU_QUIET_CURRENT_GOVERNOR), CPU_QUIET_CURRENT_GOVERNOR, context);
     }
 
     public static String getCpuQuietCurGovernor() {
         return Utils.readFile(CPU_QUIET_CURRENT_GOVERNOR);
+    }
+
+    public static void setThermalBig(int value, Context context) {
+        run(Control.write(String.valueOf(value), BIG_OFFSET), BIG_OFFSET, context);
+    }
+    public static int getThermalBig() {
+        return Utils.strToInt(Utils.readFile(BIG_OFFSET));
+    }
+
+    public static void setThermalMid(int value, Context context) {
+        run(Control.write(String.valueOf(value), MID_OFFSET), MID_OFFSET, context);
+    }
+    public static int getThermalMid() {
+        return Utils.strToInt(Utils.readFile(MID_OFFSET));
+    }
+
+    public static void setThermalLittle(int value, Context context) {
+        run(Control.write(String.valueOf(value), LITTLE_OFFSET), LITTLE_OFFSET, context);
+    }
+    public static int getThermalLittle() {
+        return Utils.strToInt(Utils.readFile(LITTLE_OFFSET));
+    }
+
+    public static void setCpucl0Uv(int value, Context context) {
+        run(Control.write(String.valueOf(value), CPUCL0_UV), CPUCL0_UV, context);
+    }
+
+    public static int getCpuCl0Uv() {
+        return Utils.strToInt(Utils.readFile(CPUCL0_UV));
+    }
+
+    public static void setCpucl1Uv(int value, Context context) {
+        run(Control.write(String.valueOf(value), CPUCL1_UV), CPUCL1_UV, context);
+    }
+
+    public static int getCpuCl1Uv() {
+        return Utils.strToInt(Utils.readFile(CPUCL1_UV));
+    }
+
+    public static void setCpucl2Uv(int value, Context context) {
+        run(Control.write(String.valueOf(value), CPUCL2_UV), CPUCL2_UV, context);
+    }
+
+    public static int getCpuCl2Uv() {
+        return Utils.strToInt(Utils.readFile(CPUCL2_UV));
     }
 
     public static List<String> getCpuQuietAvailableGovernors() {
@@ -150,6 +202,18 @@ public class Misc {
 
     public static void enableCpuFingerprintBoost(boolean enabled, Context context) {
         run(Control.write(enabled ? "1" : "0", CPU_FINGERPRINT_BOOST), CPU_FINGERPRINT_BOOST, context);
+    }
+
+    public static void enableESGBurst(boolean enabled, Context context) {
+        run(Control.write(enabled ? "1" : "0", ESG_BURST), ESG_BURST, context);
+    }
+
+    public static boolean isESGBurstEnabled() {
+        return Utils.readFile(ESG_BURST).equals("1");
+    }
+
+    public static boolean hasESGBurst() {
+        return Utils.existFile(ESG_BURST);
     }
 
     public static boolean isCpuFingerprintBoostEnabled() {
