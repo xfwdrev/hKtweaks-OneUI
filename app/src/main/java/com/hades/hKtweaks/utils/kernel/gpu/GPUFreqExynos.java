@@ -105,6 +105,11 @@ public class GPUFreqExynos {
     private static final String POWER_POLICY_S10 = "/sys/devices/platform/18500000.mali/power_policy";
     private static final String USAGE_S10 = "/sys/devices/platform/18500000.mali/utilization";
     private static GPUFreqExynos sIOInstance;
+    private static final String GPU_UNLOCK = "/sys/kernel/gpu/gpu_unlock";
+    private static final String G3D_OFFSET = "/proc/exynos_tmu/G3D_offset";
+    private static final String GPU_UV = "/sys/kernel/exynos_uv/gpu_uv_percent";
+
+
     private final HashMap<String, Integer> mAvailableVolts = new HashMap<>();
     private final HashMap<String, Integer> mCurrentFreqs = new HashMap<>();
     private final List<String> mMaxFreqs = new ArrayList<>();
@@ -487,6 +492,37 @@ public class GPUFreqExynos {
 
     public boolean hasHighspeedDelay() {
         return TUNABLE_HIGHSPEED_DELAY != null;
+    }
+
+    public boolean hasGpuUnlock() {
+        return Utils.existFile(GPU_UNLOCK);
+    }
+
+    public boolean hasThermalControl() { return Utils.existFile(G3D_OFFSET); }
+
+    public boolean hasUnderVolt() { return Utils.existFile(GPU_UV); }
+
+    public int getGpuUv() {
+        return Utils.strToInt(Utils.readFile(GPU_UV));
+    }
+
+    public void setGpuUv(int value, Context context) {
+        run(Control.write(String.valueOf(value), GPU_UV), GPU_UV, context);
+    }
+
+    public int getThermalG3D() {
+        return Utils.strToInt(Utils.readFile(G3D_OFFSET));
+    }
+
+    public void setG3DOffset(int value, Context context) {
+        run(Control.write(String.valueOf(value), G3D_OFFSET), G3D_OFFSET, context);
+    }
+
+    public void unlockGPU(boolean enabled, Context context) {
+        run(Control.write(enabled ? "1" : "0", GPU_UNLOCK), GPU_UNLOCK, context);
+    }
+    public static boolean isGpuUnlocked() {
+        return Utils.readFile(GPU_UNLOCK).equals("1");
     }
 
     public void setVoltage(Integer freq, String voltage, Context context) {

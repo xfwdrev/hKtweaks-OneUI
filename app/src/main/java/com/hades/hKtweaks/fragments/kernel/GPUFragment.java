@@ -100,6 +100,19 @@ public class GPUFragment extends RecyclerViewFragment {
         if (mGPUFreqExynos.hasVoltage()) {
             voltageInit(items);
         }
+
+        if (mGPUFreqExynos.hasUnderVolt()) {
+            gpuUndervoltInit(items);
+        }
+
+        if (mGPUFreqExynos.hasGpuUnlock()) {
+            unlockInit(items);
+        }
+
+        if (mGPUFreqExynos.hasThermalControl()) {
+            thermalControlInit(items);
+        }
+
         if (SimpleGPU.supported()) {
             simpleGpuInit(items);
         }
@@ -109,6 +122,32 @@ public class GPUFragment extends RecyclerViewFragment {
         if (AdrenoBoost.hasAdrenoBoost()) {
             adrenoboostInit(items);
         }
+    }
+
+    private void gpuUndervoltInit(List<RecyclerViewItem> items) {
+        CardView uvCard = new CardView(getActivity());
+        uvCard.setTitle(getString(R.string.g3d_uv));
+
+        SeekBarView g3duv = new SeekBarView();
+        g3duv.setTitle(getString(R.string.g3d_uv_title));
+        g3duv.setSummary(getString(R.string.g3d_uv_summary));
+        g3duv.setMin(0);
+        g3duv.setMax(15);
+        g3duv.setProgress(mGPUFreqExynos.getGpuUv());
+
+        g3duv.setOnSeekBarListener(new SeekBarView.OnSeekBarListener() {
+            @Override
+            public void onStop(SeekBarView seekBarView, int position, String value) {
+                mGPUFreqExynos.setGpuUv(position, getActivity());
+            }
+
+            @Override
+            public void onMove(SeekBarView seekBarView, int position, String value) {
+            }
+        });
+
+        uvCard.addItem(g3duv);
+        items.add(uvCard);
     }
 
     private void throttlingInit(List<RecyclerViewItem> items) {
@@ -587,6 +626,51 @@ public class GPUFragment extends RecyclerViewFragment {
             }
             items.addAll(mVoltages);
         }
+    }
+
+    private void unlockInit(List<RecyclerViewItem> items) {
+        CardView unCard = new CardView(getActivity());
+        unCard.setTitle(getString(R.string.gpuu_title));
+
+        SwitchView unlock = new SwitchView();
+        unlock.setSummary(getString(R.string.gpuu_summary));
+        unlock.setChecked(GPUFreqExynos.isGpuUnlocked());
+        unlock.addOnSwitchListener((switchView, isChecked)
+                -> mGPUFreqExynos.unlockGPU(isChecked, getActivity()));
+
+        unCard.addItem(unlock);
+        items.add(unCard);
+    }
+
+    private void thermalControlInit(List<RecyclerViewItem> items) {
+        CardView tvCard = new CardView(getActivity());
+        tvCard.setTitle(getString(R.string.gpu_thermal_control));
+
+        SeekBarView g3d = new SeekBarView();
+        g3d.setTitle(getString(R.string.g3d_title));
+        g3d.setSummary(getString(R.string.g3d_summary));
+        g3d.setMin(-15);
+        g3d.setMax(0);
+        int g3dValue = mGPUFreqExynos.getThermalG3D() / 1000;
+        int g3dIndex = g3dValue - (-15);
+        g3d.setProgress(g3dIndex);
+
+        g3d.setOnSeekBarListener(new SeekBarView.OnSeekBarListener() {
+            @Override
+            public void onStop(SeekBarView seekBarView, int position, String value) {
+                int g3dValue = position - 15;
+                int kernelValue = g3dValue * 1000;
+                mGPUFreqExynos.setG3DOffset(kernelValue, getActivity());
+            }
+
+            @Override
+            public void onMove(SeekBarView seekBarView, int position, String value) {
+                // Optional: update UI preview if your SeekBar supports it
+            }
+        });
+
+        tvCard.addItem(g3d);
+        items.add(tvCard);
     }
 
     private void seekbarProfInit(SeekBarView seekbar, final List<Integer> freqs, final List<String> voltages,
