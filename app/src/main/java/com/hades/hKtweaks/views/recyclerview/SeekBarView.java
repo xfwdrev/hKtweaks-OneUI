@@ -172,7 +172,7 @@ public class SeekBarView extends RecyclerViewItem {
     }
 
     public void setProgress(int progress) {
-        mProgress = progress;
+        mProgress = Math.max(0, Math.min(progress, mItems.size() - 1));
         refresh();
     }
 
@@ -200,12 +200,16 @@ public class SeekBarView extends RecyclerViewItem {
             }
         }
         if (mSeekBar != null) {
-            mSeekBar.setMax(mItems.size() - 1);
+            mSeekBar.setMax(Math.max(0, mItems.size() - 1));
             mSeekBar.setMin(0);
             mSeekBar.setAlpha(mAlpha);
             mSeekBar.setEnabled(mEnabled);
             if (mValue != null) {
                 try {
+                    if (mProgress < 0 || mProgress >= mItems.size()) {
+                        mProgress = 0;
+                    }
+
                     String text = mItems.get(mProgress);
                     mSeekBar.setProgress(mProgress);
                     if (mUnit != null) text += mUnit;
