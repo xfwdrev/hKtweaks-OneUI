@@ -160,7 +160,6 @@ public class CPUFragment extends RecyclerViewFragment {
             cpuTouchBoostInit(items);
         }
     }
-
     private void freqInit(List<RecyclerViewItem> items) {
         mCPUUsageBig = new XYGraphView();
         if (mCPUFreq.isBigLITTLE()) {
@@ -422,6 +421,7 @@ public class CPUFragment extends RecyclerViewFragment {
         SeekBarView ltc = new SeekBarView();
         ltc.setTitle(getString(R.string.ltc_title));
         ltc.setSummary(getString(R.string.ltc_summary));
+        ltc.setUnit(getString(R.string.celsius));
         ltc.setMin(-15);
         ltc.setMax(0);
         int ltcValue = Misc.getThermalLittle() / 1000;
@@ -446,6 +446,7 @@ public class CPUFragment extends RecyclerViewFragment {
         SeekBarView mdc = new SeekBarView();
         mdc.setTitle(getString(R.string.mdc_title));
         mdc.setSummary(getString(R.string.mdc_summary));
+        mdc.setUnit(getString(R.string.celsius));
         mdc.setMin(-15);
         mdc.setMax(0);
         int midValue = Misc.getThermalMid() / 1000;
@@ -470,6 +471,7 @@ public class CPUFragment extends RecyclerViewFragment {
         SeekBarView bic = new SeekBarView();
         bic.setTitle(getString(R.string.bic_title));
         bic.setSummary(getString(R.string.bic_summary));
+        bic.setUnit(getString(R.string.celsius));
         bic.setMin(-15);
         bic.setMax(0);
         int bicValue = Misc.getThermalBig() / 1000;
@@ -501,6 +503,7 @@ public class CPUFragment extends RecyclerViewFragment {
         SeekBarView cl0 = new SeekBarView();
         cl0.setTitle(getString(R.string.cl0_title));
         cl0.setSummary(getString(R.string.cl0_summary));
+        cl0.setUnit(getString(R.string.percent));
         cl0.setMin(0);
         cl0.setMax(15);
         cl0.setProgress(Misc.getCpuCl0Uv());
@@ -521,6 +524,7 @@ public class CPUFragment extends RecyclerViewFragment {
         SeekBarView cl1 = new SeekBarView();
         cl1.setTitle(getString(R.string.cl1_title));
         cl1.setSummary(getString(R.string.cl1_summary));
+        cl1.setUnit(getString(R.string.percent));
         cl1.setMin(0);
         cl1.setMax(15);
         cl1.setProgress(Misc.getCpuCl1Uv());
@@ -541,6 +545,7 @@ public class CPUFragment extends RecyclerViewFragment {
         SeekBarView cl2 = new SeekBarView();
         cl2.setTitle(getString(R.string.cl2_title));
         cl2.setSummary(getString(R.string.cl2_summary));
+        cl2.setUnit(getString(R.string.percent));
         cl2.setMin(0);
         cl2.setMax(15);
         cl2.setProgress(Misc.getCpuCl2Uv());

@@ -131,6 +131,7 @@ public class GPUFragment extends RecyclerViewFragment {
         SeekBarView g3duv = new SeekBarView();
         g3duv.setTitle(getString(R.string.g3d_uv_title));
         g3duv.setSummary(getString(R.string.g3d_uv_summary));
+        g3duv.setUnit(getString(R.string.percent));
         g3duv.setMin(0);
         g3duv.setMax(15);
         g3duv.setProgress(mGPUFreqExynos.getGpuUv());
@@ -649,6 +650,7 @@ public class GPUFragment extends RecyclerViewFragment {
         SeekBarView g3d = new SeekBarView();
         g3d.setTitle(getString(R.string.g3d_title));
         g3d.setSummary(getString(R.string.g3d_summary));
+        g3d.setUnit(getString(R.string.celsius));
         g3d.setMin(-15);
         g3d.setMax(0);
         int g3dValue = mGPUFreqExynos.getThermalG3D() / 1000;
