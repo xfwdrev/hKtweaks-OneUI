@@ -1249,15 +1249,17 @@
     <string name="gpuu_summary">Enables GPU overclocking to 949MHz</string>
     <string name="thermal_control">CPU Thermal Control</string>
     <string name="ltc_title">LITTLE</string>
-    <string name="ltc_summary">LITTLE cores thermal offset</string>
+    <string name="ltc_summary">Sets the thermal offset. Negative values will make the device throttle sooner and stay cooler, Positive values delay throttling so it keeps performance up for  longer</string>
     <string name="mdc_title">MID</string>
-    <string name="mdc_summary">MID cores thermal offset</string>
+    <string name="mdc_summary">Sets the thermal offset. Negative values will make the device throttle sooner and stay cooler, Positive values delay throttling so it keeps performance up for longer</string>
     <string name="bic_title">BIG</string>
-    <string name="bic_summary">BIG cores thermal offset</string>
+    <string name="bic_summary">Sets the thermal offset. Negative values will make the device throttle sooner and stay cooler, Positive values delay throttling so it keeps performance up for longer</string>
     <string name="gpu_thermal_control">Thermal Control</string>
     <string name="g3d_title">GPU Thermal Control</string>
-    <string name="g3d_summary">GPU Thermal Offset</string>
+    <string name="g3d_summary">Sets the thermal offset. Negative values will make the device throttle sooner and stay cooler, Positive values delay throttling so it keeps performance up for longer</string>
     <string name="g3d_uv">GPU Undervolt</string>
     <string name="g3d_uv_title">G3D</string>
     <string name="g3d_uv_summary">GPU undervolt offset (%)</string>
+    <string name="ipr_title">Throttling Protection</string>
+    <string name="ipr_summary">When enabled, userspace (the ROM\'s services and processes) is blocked from throttling the CPU and GPU, so that only kernel-level throttling happens. </string>
 </resources>

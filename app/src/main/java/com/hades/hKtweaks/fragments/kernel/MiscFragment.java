@@ -86,6 +86,9 @@ public class MiscFragment extends RecyclerViewFragment {
         if (mMisc.hasGentleFairSleepers()) {
             gentlefairsleepersInit(items);
         }
+        if (mMisc.hasThrottlerProtect()) {
+            throttlerProtect(items);
+        }
         if (mMisc.hasArchPower()) {
             archPowerInit(items);
         }
@@ -101,6 +104,7 @@ public class MiscFragment extends RecyclerViewFragment {
         if (Pwm.supported()) {
             pwmInit(items);
         }
+
         networkInit(items);
         wakelockInit(items);
     }
@@ -251,6 +255,18 @@ public class MiscFragment extends RecyclerViewFragment {
 
             items.add(dynamicFsync);
         }
+    }
+
+    private void throttlerProtect(List<RecyclerViewItem> items) {
+        SwitchView inp = new SwitchView();
+        inp.setTitle(getString(R.string.ipr_title));
+        inp.setSummary(getString(R.string.ipr_summary));
+        inp.setChecked(mMisc.isEnabledThrottlerProtect());
+        inp.addOnSwitchListener((switchView, isChecked) -> {
+            mMisc.enableThrottlerProtect(isChecked, getActivity());
+        });
+
+        items.add(inp);
     }
 
     private void gentlefairsleepersInit(List<RecyclerViewItem> items) {

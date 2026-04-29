@@ -45,6 +45,8 @@ public class Misc {
     private static final String MAGISK_BIN = "/res/magisk";
     private static final String RESETPROP = MAGISK_BIN + " resetprop -v -n ";
     private static Misc sInstance;
+    private static final String THROTTLER_PROTECT = "/sys/kernel/throttlers_protection";
+
     private final List<String> mLoggers = new ArrayList<>();
     private final List<String> mCrcs = new ArrayList<>();
     private final List<String> mFsyncs = new ArrayList<>();
@@ -207,6 +209,12 @@ public class Misc {
     public boolean hasLoggerEnable() {
         return LOGGER_FILE != null;
     }
+
+    public void enableThrottlerProtect(boolean enabled, Context context) {
+        run(Control.write(enabled ? "1" : "0", THROTTLER_PROTECT), THROTTLER_PROTECT, context);
+    }
+    public boolean isEnabledThrottlerProtect() { return Utils.readFile(THROTTLER_PROTECT).equals("1"); }
+    public boolean hasThrottlerProtect() { return Utils.existFile(THROTTLER_PROTECT); }
 
     private void run(String command, String id, Context context) {
         Control.runSetting(command, ApplyOnBootFragment.MISC, id, context);
