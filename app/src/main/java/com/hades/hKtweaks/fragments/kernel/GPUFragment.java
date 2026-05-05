@@ -651,23 +651,26 @@ public class GPUFragment extends RecyclerViewFragment {
         g3d.setTitle(getString(R.string.g3d_title));
         g3d.setSummary(getString(R.string.g3d_summary));
         g3d.setUnit(getString(R.string.celsius));
-        g3d.setMin(-15);
-        g3d.setMax(0);
+
+        int gmin = -15;
+        int gmax = 15;
+
+        g3d.setMin(gmin);
+        g3d.setMax(gmax);
         int g3dValue = mGPUFreqExynos.getThermalG3D() / 1000;
-        int g3dIndex = g3dValue - (-15);
+        int g3dIndex = g3dValue - gmin;
         g3d.setProgress(g3dIndex);
 
         g3d.setOnSeekBarListener(new SeekBarView.OnSeekBarListener() {
             @Override
             public void onStop(SeekBarView seekBarView, int position, String value) {
-                int g3dValue = position - 15;
+                int g3dValue = position + gmin;
                 int kernelValue = g3dValue * 1000;
                 mGPUFreqExynos.setG3DOffset(kernelValue, getActivity());
             }
 
             @Override
             public void onMove(SeekBarView seekBarView, int position, String value) {
-                // Optional: update UI preview if your SeekBar supports it
             }
         });
 
