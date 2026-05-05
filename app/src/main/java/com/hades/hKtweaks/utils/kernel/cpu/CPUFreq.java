@@ -68,6 +68,54 @@ public class CPUFreq {
     private static final String CPU_GOVERNOR_TUNABLES = "/sys/devices/system/cpu/cpufreq/%s";
     private static final String CPU_GOVERNOR_TUNABLES_CORE = "/sys/devices/system/cpu/cpu%d/cpufreq/%s";
     private static final String CPU_BIG_ALL_CORES_FULL = "/sys/devices/system/cpu/cpufreq/mp-cpufreq/cluster1_all_cores_max_freq";
+    private static final String FREQ_CLAMP0 = "/sys/kernel/exynos_fc/cpucl0_clamp";
+    private static final String FREQ_CLAMP1 = "/sys/kernel/exynos_fc/cpucl1_clamp";
+    private static final String FREQ_CLAMP2 = "/sys/kernel/exynos_fc/cpucl2_clamp";
+
+    public boolean hasFreqClamp0() {
+        return Utils.existFile(FREQ_CLAMP0);
+    }
+    public boolean hasFreqClamp1() {
+        return Utils.existFile(FREQ_CLAMP1);
+    }
+    public boolean hasFreqClamp2() {
+        return Utils.existFile(FREQ_CLAMP2);
+    }
+
+    public void setFreqClamp0(int value, Context context) {
+        if (!hasFreqClamp0()) return;
+
+        run(Control.write(String.valueOf(value), FREQ_CLAMP0), FREQ_CLAMP0, context);
+    }
+    public void setFreqClamp1(int value, Context context) {
+        if (!hasFreqClamp0()) return;
+
+        run(Control.write(String.valueOf(value), FREQ_CLAMP1), FREQ_CLAMP1, context);
+    }
+    public void setFreqClamp2(int value, Context context) {
+        if (!hasFreqClamp0()) return;
+
+        run(Control.write(String.valueOf(value), FREQ_CLAMP2), FREQ_CLAMP2, context);
+    }
+    public int getFreqClamp0() {
+        if (!hasFreqClamp0()) return 0;
+
+        String value = Utils.readFile(FREQ_CLAMP0);
+        return value != null ? Utils.strToInt(value) : 0;
+    }
+    public int getFreqClamp1() {
+        if (!hasFreqClamp1()) return 0;
+
+        String value = Utils.readFile(FREQ_CLAMP1);
+        return value != null ? Utils.strToInt(value) : 0;
+    }
+    public int getFreqClamp2() {
+        if (!hasFreqClamp2()) return 0;
+
+        String value = Utils.readFile(FREQ_CLAMP2);
+        return value != null ? Utils.strToInt(value) : 0;
+    }
+
     private static CPUFreq sInstance;
     public int mCoreCtlMinCpu = 2;
     private int mCpuCount;

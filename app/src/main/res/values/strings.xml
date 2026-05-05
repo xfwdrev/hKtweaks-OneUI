@@ -1262,4 +1262,9 @@
     <string name="g3d_uv_summary">GPU undervolt offset (%)</string>
     <string name="ipr_title">Throttling Protection</string>
     <string name="ipr_summary">When enabled, userspace (the ROM\'s services and processes) is blocked from throttling the CPU and GPU, so that only kernel-level throttling happens. </string>
+    <string name="fclamp_title">Exynos Frequency Control</string>
+    <string name="fclamp_little">Little Cluster</string>
+    <string name="fclamp_middle">Middle Cluster</string>
+    <string name="fclamp_big">Big Cluster</string>
+    <string name="fclamp_desc">Set the clamping frequency for this cluster</string>
 </resources>

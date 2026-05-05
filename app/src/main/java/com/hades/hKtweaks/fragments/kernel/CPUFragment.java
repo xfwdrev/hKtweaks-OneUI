@@ -66,6 +66,9 @@ public class CPUFragment extends RecyclerViewFragment {
     private SelectView mCPUMinBig;
     private SelectView mCPUMaxScreenOffBig;
     private SelectView mCPUGovernorBig;
+    private SelectView mCPUClamp0;
+    private SelectView mCPUClamp1;
+    private SelectView mCPUClamp2;
     private XYGraphView mCPUUsageMid;
     private SelectView mCPUMaxMid;
     private SelectView mCPUMinMid;
@@ -84,6 +87,9 @@ public class CPUFragment extends RecyclerViewFragment {
     private int mCPUMaxFreqBig;
     private int mCPUMinFreqBig;
     private int mCPUMaxScreenOffFreqBig;
+    private int mClamp0;
+    private int mClamp1;
+    private int mClamp2;
     private String mCPUGovernorStrBig;
     private int mCPUMaxFreqMid;
     private int mCPUMinFreqMid;
@@ -127,19 +133,18 @@ public class CPUFragment extends RecyclerViewFragment {
         if (mCPUBoost.supported()) {
             cpuBoostInit(items);
         }
-
         if (Misc.hasUnderVolt()) {
             cpuUndervolt(items);
         }
-
+        if (mCPUFreq.hasFreqClamp0() || mCPUFreq.hasFreqClamp1() || mCPUFreq.hasFreqClamp2()) {
+            cpuClamp(items);
+        }
         if (Misc.hasThermalControl()) {
             thermalControl(items);
         }
-
         if (Misc.hasESGBurst()) {
             esgburst(items);
         }
-
         if (Misc.hasCpuFingerprintBoost()) {
             cpuFingerprintBoostInit(items);
         }
@@ -158,6 +163,85 @@ public class CPUFragment extends RecyclerViewFragment {
 
         if (Misc.hasCpuTouchBoost()) {
             cpuTouchBoostInit(items);
+        }
+    }
+    private void cpuClamp(List<RecyclerViewItem> items) {
+
+        CardView clampCard = new CardView(getActivity());
+        clampCard.setTitle(getString(R.string.fclamp_title));
+
+        List<Integer> freqsLittle = mCPUFreq.getFreqs(mCPUFreq.getLITTLECpu());
+        List<Integer> freqsMid = mCPUFreq.hasMidCpu() ? mCPUFreq.getFreqs(mCPUFreq.getMidCpu()) : null;
+        List<Integer> freqsBig = mCPUFreq.getFreqs(mCPUFreq.getBigCpu());
+
+        if (freqsLittle != null) {
+
+            List<String> littleList = new ArrayList<>();
+            littleList.add(getString(R.string.disabled));
+
+            for (int f : freqsLittle) {
+                littleList.add((f / 1000) + getString(R.string.mhz));
+            }
+
+            mCPUClamp0 = new SelectView();
+            mCPUClamp0.setTitle(getString(R.string.fclamp_little));
+            mCPUClamp0.setSummary(getString(R.string.fclamp_desc));
+            mCPUClamp0.setItems(littleList);
+
+            mCPUClamp0.setOnItemSelected((v, pos, item) -> {
+                int value = (pos == 0) ? 0 : freqsLittle.get(pos - 1);
+                mCPUFreq.setFreqClamp0(value, getActivity());
+            });
+
+            clampCard.addItem(mCPUClamp0);
+        }
+
+        if (freqsMid != null) {
+
+            List<String> midList = new ArrayList<>();
+            midList.add(getString(R.string.disabled));
+
+            for (int f : freqsMid) {
+                midList.add((f / 1000) + getString(R.string.mhz));
+            }
+
+            mCPUClamp1 = new SelectView();
+            mCPUClamp1.setTitle(getString(R.string.fclamp_middle));
+            mCPUClamp1.setSummary(getString(R.string.fclamp_desc));
+            mCPUClamp1.setItems(midList);
+
+            mCPUClamp1.setOnItemSelected((v, pos, item) -> {
+                int value = (pos == 0) ? 0 : freqsMid.get(pos - 1);
+                mCPUFreq.setFreqClamp1(value, getActivity());
+            });
+
+            clampCard.addItem(mCPUClamp1);
+        }
+
+        if (freqsBig != null) {
+
+            List<String> bigList = new ArrayList<>();
+            bigList.add(getString(R.string.disabled));
+
+            for (int f : freqsBig) {
+                bigList.add((f / 1000) + getString(R.string.mhz));
+            }
+
+            mCPUClamp2 = new SelectView();
+            mCPUClamp2.setTitle(getString(R.string.fclamp_big));
+            mCPUClamp2.setSummary(getString(R.string.fclamp_desc));
+            mCPUClamp2.setItems(bigList);
+
+            mCPUClamp2.setOnItemSelected((v, pos, item) -> {
+                int value = (pos == 0) ? 0 : freqsBig.get(pos - 1);
+                mCPUFreq.setFreqClamp2(value, getActivity());
+            });
+
+            clampCard.addItem(mCPUClamp2);
+        }
+
+        if (clampCard.size() > 0) {
+            items.add(clampCard);
         }
     }
     private void freqInit(List<RecyclerViewItem> items) {
@@ -422,16 +506,20 @@ public class CPUFragment extends RecyclerViewFragment {
         ltc.setTitle(getString(R.string.ltc_title));
         ltc.setSummary(getString(R.string.ltc_summary));
         ltc.setUnit(getString(R.string.celsius));
-        ltc.setMin(-15);
-        ltc.setMax(0);
+
+        int lmin = -15;
+        int lmax = 15;
+
+        ltc.setMin(lmin);
+        ltc.setMax(lmax);
         int ltcValue = Misc.getThermalLittle() / 1000;
-        int ltcIndex = ltcValue - (-15);
+        int ltcIndex = ltcValue - lmin;
         ltc.setProgress(ltcIndex);
 
         ltc.setOnSeekBarListener(new SeekBarView.OnSeekBarListener() {
             @Override
             public void onStop(SeekBarView seekBarView, int position, String value) {
-                int ltcValue = position - 15;
+                int ltcValue = position + lmin;
                 int kernelValue = ltcValue * 1000;
                 Misc.setThermalLittle(kernelValue, getActivity());
             }
@@ -447,16 +535,20 @@ public class CPUFragment extends RecyclerViewFragment {
         mdc.setTitle(getString(R.string.mdc_title));
         mdc.setSummary(getString(R.string.mdc_summary));
         mdc.setUnit(getString(R.string.celsius));
-        mdc.setMin(-15);
-        mdc.setMax(0);
+
+        int mmin = -15;
+        int mmax = 15;
+
+        mdc.setMin(mmin);
+        mdc.setMax(mmax);
         int midValue = Misc.getThermalMid() / 1000;
-        int midIndex = midValue - (-15);
+        int midIndex = midValue - mmin;
         mdc.setProgress(midIndex);
 
         mdc.setOnSeekBarListener(new SeekBarView.OnSeekBarListener() {
             @Override
             public void onStop(SeekBarView seekBarView, int position, String value) {
-                int mdcValue = position - 15;
+                int mdcValue = position + mmin;
                 int kernelValue = mdcValue * 1000;
                 Misc.setThermalMid(kernelValue, getActivity());
             }
@@ -472,16 +564,20 @@ public class CPUFragment extends RecyclerViewFragment {
         bic.setTitle(getString(R.string.bic_title));
         bic.setSummary(getString(R.string.bic_summary));
         bic.setUnit(getString(R.string.celsius));
-        bic.setMin(-15);
-        bic.setMax(0);
+
+        int bmin = -15;
+        int bmax = 15;
+
+        bic.setMin(bmin);
+        bic.setMax(bmax);
         int bicValue = Misc.getThermalBig() / 1000;
-        int bicIndex = bicValue - (-15);
+        int bicIndex = bicValue - bmin;
         bic.setProgress(bicIndex);
 
         bic.setOnSeekBarListener(new SeekBarView.OnSeekBarListener() {
             @Override
             public void onStop(SeekBarView seekBarView, int position, String value) {
-                int bicValue = position - 15;
+                int bicValue = position + bmin;
                 int kernelValue = bicValue * 1000;
                 Misc.setThermalBig(kernelValue, getActivity());
             }
@@ -929,7 +1025,15 @@ public class CPUFragment extends RecyclerViewFragment {
         for (int i = 0; i < mCPUFreqs.length; i++) {
             mCPUFreqs[i] = mCPUFreq.getCurFreq(i);
         }
-
+        if (mCPUClamp0 != null) {
+            mClamp0 = mCPUFreq.getFreqClamp0();
+        }
+        if (mCPUClamp1 != null) {
+            mClamp1 = mCPUFreq.getFreqClamp1();
+        }
+        if (mCPUClamp2 != null) {
+            mClamp2 = mCPUFreq.getFreqClamp2();
+        }
         if (mCPUMaxBig != null) {
             mCPUMaxFreqBig = mCPUFreq.getMaxFreq(mCPUMaxFreqBig == 0);
         }
@@ -975,6 +1079,30 @@ public class CPUFragment extends RecyclerViewFragment {
     @Override
     protected void refresh() {
         super.refresh();
+
+        if (mCPUClamp0 != null) {
+            if (mClamp0 == 0) {
+                mCPUClamp0.setItem(getString(R.string.disabled));
+            } else {
+                mCPUClamp0.setItem((mClamp0 / 1000) + getString(R.string.mhz));
+            }
+        }
+
+        if (mCPUClamp1 != null) {
+            if (mClamp1 == 0) {
+                mCPUClamp1.setItem(getString(R.string.disabled));
+            } else {
+                mCPUClamp1.setItem((mClamp1 / 1000) + getString(R.string.mhz));
+            }
+        }
+
+        if (mCPUClamp2 != null) {
+            if (mClamp2 == 0) {
+                mCPUClamp2.setItem(getString(R.string.disabled));
+            } else {
+                mCPUClamp2.setItem((mClamp2 / 1000) + getString(R.string.mhz));
+            }
+        }
 
         if (mCPUUsages != null && mCPUStates != null) {
             refreshUsages(mCPUUsages, mCPUUsageBig, mCPUFreq.getBigCpuRange(), mCPUStates);
