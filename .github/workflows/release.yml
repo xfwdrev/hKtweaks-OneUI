@@ -1,35 +1,38 @@
 name: New Release
+
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
- release:
-   runs-on: ubuntu-latest
-   steps:
-     - name: Checkout
-       uses: actions/checkout@v2
-     - name: Init values
-       id: values
-       run: |
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Init values
+        id: values
+        run: |
           version=$(grep -Po -m 1 '(?<=versionName ).*' ./app/build.gradle | tr -d \")
-          echo ::set-output name=name::hKtweaks v$version
-          echo ::set-output name=tag::v$(echo $version | tr -d "\- OneUI")
-          echo ::set-output name=apk::hKtweaks_v$(echo $version | sed -r 's/[- ]+/_/g')
-     - name: Create release
-       id: create_release
-       uses: actions/create-release@v1
-       env:
-         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-       with:
-         release_name: ${{ steps.values.outputs.name }}
-         tag_name: ${{ steps.values.outputs.tag }}
-         body: changelog
-     - name: Add apk
-       uses: actions/upload-release-asset@v1
-       env:
-         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-       with:
-         upload_url: ${{ steps.create_release.outputs.upload_url }} 
-         asset_path: ./app/release/app-release.apk
-         asset_name: ${{ steps.values.outputs.apk }}.apk
-         asset_content_type: application/vnd.android.package-archive
+          echo "name=hKtweaks v$version" >> $GITHUB_OUTPUT
+          echo "tag=v$(echo $version | tr -d "\- OneUI")" >> $GITHUB_OUTPUT
+          echo "apk=hKtweaks_v$(echo $version | sed -r 's/[- ]+/_/g')" >> $GITHUB_OUTPUT
+
+      - name: Create tag
+        run: |
+          git tag ${{ steps.values.outputs.tag }} || true
+          git push origin ${{ steps.values.outputs.tag }} || true
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.values.outputs.tag }}
+          name: ${{ steps.values.outputs.name }}
+          body: changelog
+          files: ./app/release/app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
