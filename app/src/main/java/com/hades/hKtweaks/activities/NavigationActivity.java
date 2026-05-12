@@ -319,25 +319,25 @@ public class NavigationActivity extends BaseActivity
             startService(new Intent(this, Monitor.class));
         }
 
-//        Updater.checkForUpdate(this, new Updater.UpdateChecker() {
-//            @Override
-//            public void updateAvailable(boolean available, String url, String versionName) {
-//                mDrawer.setButtonBadges(available ? ToolbarLayout.N_BADGE : 0, 0);
-//                if (available)
-//                    mNavigationView.getMenu().findItem(R.string.about).setActionView(R.layout.sesl_badge);
-//                else mNavigationView.getMenu().findItem(R.string.about).setActionView(null);
-//            }
-//
-//            @Override
-//            public void githubAvailable(String url) {
-//
-//            }
-//
-//            @Override
-//            public void noConnection() {
-//
-//            }
-//        });
+        Updater.checkForUpdate(this, new Updater.UpdateChecker() {
+            @Override
+            public void updateAvailable(boolean available, String url, String versionName) {
+                mDrawer.setButtonBadges(available ? ToolbarLayout.N_BADGE : 0, 0);
+                if (available)
+                    mNavigationView.getMenu().findItem(R.string.about).setActionView(R.layout.sesl_badge);
+                else mNavigationView.getMenu().findItem(R.string.about).setActionView(null);
+            }
+
+            @Override
+            public void githubAvailable(String url) {
+
+            }
+
+            @Override
+            public void noConnection() {
+
+            }
+        });
     }
 
     private int firstTab() {
