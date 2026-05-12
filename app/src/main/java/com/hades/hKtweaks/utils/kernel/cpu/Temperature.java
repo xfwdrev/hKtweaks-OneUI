@@ -187,7 +187,7 @@ public class Temperature {
             try {
                 JSONArray tempArray = new JSONArray(Utils.readAssetFile(context, "temp.json"));
                 String board = Build.BOARD.toLowerCase();
-                if (board.contains("exynos") || board.contains("universal")) {
+                if (Build.BOARD.toLowerCase().contains("exynos") || Build.BOARD.toLowerCase().contains("universal") || Build.BOARD.toLowerCase().contains("s5e") ){
                     isExynos = true;
                     getExyNodes();
                 }
